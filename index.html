@@ -24,6 +24,10 @@
 	.clear {
 		clear: both;
 	}
+
+	.strikeout {
+		text-decoration: line-through;
+	}
 </style>
 </head>
 <body>
@@ -50,9 +54,7 @@
 		migrateButton.addEventListener("click", migrateSprintButton_click);
 
 		var clearButton = document.getElementById("clear-data");
-		clearButton.addEventListener("click", clearDataButton_click);
-
-		
+		clearButton.addEventListener("click", clearDataButton_click);	
 	});
 
 	function addItem(container, recordToInput) {
@@ -60,15 +62,11 @@
 		var sectionData = JSON.parse(localStorage.getItem(section));
 
 		var recordId = sectionData.length;
-		var recordData = {"text" : recordToInput};
-		
-		//displayRecordInContainer(container, section, recordData, recordId);
+		var recordData = {"text" : recordToInput, "strike": false};
 
 		sectionData.push(recordData);
 		localStorage.setItem(section, JSON.stringify(sectionData));
 
-		//location.reload();
-		clearSection(container);
 		loadSection(container);
 	}
 
@@ -107,6 +105,9 @@
 				for(var r = 0, record; record = sectionData[r]; r++) {
 					var listItem = document.createElement("li");
 					listItem.innerHTML = record.text;
+					if(record.strike) {
+						listItem.className = "strikeout";
+					}
 					listContainer.appendChild(listItem);
 				}
 			}
@@ -165,7 +166,6 @@
 	function cancelButton_click(event) {
 		var recordElement = this.parentElement;
 		var container = recordElement.parentElement;
-		clearSection(container);
 		loadSection(container);
 	}
 
@@ -176,7 +176,6 @@
 		var recordId = recordElement.getAttribute("data-record-id");
 
 		var text = recordElement.getElementsByTagName('span')[0].innerHTML;
-		
 
 		displayEditRecord(container, text, recordId);
 
@@ -206,10 +205,27 @@
 		var response = confirm("Are you sure you want to delete \"" + record.getElementsByTagName('span')[0].innerHTML + "\"?");
 		if(response) {
 			deleteItem(container, record);
-			clearSection(container);
 			loadSection(container);
 		}
 	}
+
+	function toggleStrike_click(event) {
+		var record = this.parentElement;
+		var recordId = record.getAttribute("data-record-id");
+		var container = record.parentElement;
+		toggleStrike(container, recordId);
+	}
+
+	function toggleStrike(container, recordId) {
+		var section = container.getAttribute("data-section");
+		var sectionData = JSON.parse(localStorage.getItem(section));
+
+		sectionData[recordId].strike = !sectionData[recordId].strike;
+		localStorage.setItem(section, JSON.stringify(sectionData));
+
+		loadSection(container);
+	}
+
 
 	function displayEditRecord(container, contents, id) {
 		var recordContainer = document.createElement("div");
@@ -237,6 +253,7 @@
 		container.appendChild(recordContainer);
 
 		inputField.focus();
+		inputField.setSelectionRange(0, inputField.value.length);
 	}
 
 	function displayRecordInContainer(container, section, record, id) {
@@ -245,6 +262,10 @@
 		var textContainer = document.createElement("span");
 		textContainer.innerHTML = record.text;
 		textContainer.className = "record-display";
+		if(record.strike) {
+			textContainer.className += " strikeout";
+		}
+		textContainer.addEventListener("click", toggleStrike_click);
 		
 		recordContainer.className = "record";
 		recordContainer.setAttribute("data-record-id", id);
@@ -270,7 +291,6 @@
 			loadSection(box);
 		}
 
-		
 		var titleString = localStorage.getItem("title");
 		if(titleString == null) {
 			titleString = "Retrospective for " + new Date().toLocaleDateString();	
@@ -281,13 +301,10 @@
 		
 	}
 
-	function clearSection(container) {
-		container.innerHTML = "";
-	}
-
 	function loadSection(container) {
+		container.innerHTML = "";
 		addSectionInput(container);
-		addLabel(container);
+		addSectionLabel(container);
 		var section = container.getAttribute("data-section");
 		var sectionStorage = localStorage.getItem(section);
 		if(sectionStorage == null) {
@@ -325,21 +342,11 @@
 		inputField.focus();
 	}
 
-	function addLabel(container) {
+	function addSectionLabel(container) {
 		var sectionDisplay = container.getAttribute("data-section-display");
 		var sectionHeader = document.createElement("h2");
 		sectionHeader.innerHTML = sectionDisplay;
 		container.appendChild(sectionHeader);
-	}
-
-	function addLabels() {
-		var boxes = document.getElementsByClassName("box");
-		for(var i = 0, box; box = boxes[i]; i++) {
-			var sectionDisplay = box.getAttribute("data-section-display");
-			var sectionHeader = document.createElement("h2");
-			sectionHeader.innerHTML = sectionDisplay;
-			box.appendChild(sectionHeader);
-		}
 	}
 </script>
 </html>
