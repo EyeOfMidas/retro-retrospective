@@ -129,9 +129,43 @@
 		}
 	}
 
+	function saveEditItem_click(event) {
+		var recordElement = this.parentElement;
+		var container = recordElement.parentElement;
+		var section = container.getAttribute("data-section");
+		var recordId = recordElement.getAttribute("data-record-id");
+
+		var inputField = recordElement.getElementsByClassName("record-edit")[0];
+		var recordToInput = inputField.value;
+		var recordData = {"text" : recordToInput};
+		
+		var sectionData = JSON.parse(localStorage.getItem(section));
+
+		sectionData[recordId] = recordData;
+		localStorage.setItem(section, JSON.stringify(sectionData));
+
+		container.removeChild(recordElement);
+
+		displayRecordInContainer(container, section, recordData, recordId);
+	}
+
+	function cancelEditItem_click(event) {
+		location.reload();
+	}
+
 	function editItem_click(event) {
-		var record = this.parentElement;
-		console.log("edit", event, this.parentElement);
+
+		var recordElement = this.parentElement;
+		var container = recordElement.parentElement;
+		var recordId = recordElement.getAttribute("data-record-id");
+
+		var text = recordElement.getElementsByTagName('span')[0].innerHTML;
+		
+
+		displayEditRecord(container, text, recordId);
+
+		container.removeChild(recordElement);
+		console.log("edit", text, recordElement, container);
 	}
 
 	function deleteItem_click(event) {
@@ -141,7 +175,6 @@
 		if(response) {
 			var recordId = record.getAttribute("data-record-id");
 			var section = container.getAttribute("data-section");
-			console.log(section, recordId);
 
 			var sectionStorage = JSON.parse(localStorage.getItem(section));
 			var newSectionStorage = [];
@@ -153,9 +186,37 @@
 
 			localStorage.setItem(section, JSON.stringify(newSectionStorage));
 
-			record.parentElement.removeChild(record);
-
+			container.removeChild(record);
 		}
+	}
+
+	function displayEditRecord(container, contents, id) {
+		var recordContainer = document.createElement("div");
+
+		var inputField = document.createElement("input");
+		inputField.type = "text";
+		inputField.value = contents;
+		inputField.className = "record-edit";
+
+		var saveButton = document.createElement("button");
+		saveButton.innerHTML = "Save";
+		saveButton.addEventListener("click", saveEditItem_click);
+		
+		recordContainer.className = "record-edit";
+		recordContainer.setAttribute("data-record-id", id);
+
+		var editButton = document.createElement("button");
+		editButton.innerHTML = "...";
+		editButton.addEventListener("click", editItem_click);
+
+		var cancelButton = document.createElement("button");
+		cancelButton.innerHTML = "Cancel";
+		cancelButton.addEventListener("click", cancelEditItem_click);
+
+		recordContainer.appendChild(inputField);
+		recordContainer.appendChild(saveButton);
+		recordContainer.appendChild(cancelButton);
+		container.appendChild(recordContainer);
 	}
 
 	function displayRecordInContainer(container, section, record, id) {
