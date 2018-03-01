@@ -4,15 +4,32 @@
 	.title {
 		display: inline;
 	}
+
+	.grid2x2 {
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: row;
+	}
+
+	.grid2x2 > div {
+		display: flex; 
+		flex-basis: calc(50% - 42px);
+		flex-direction: column;
+	}
+
+	.grid2x2 > div > div {
+		display: flex;
+		flex-direction: row;
+	}
+
 	.box {
 		border: 1px solid black;
-		width: 45%;
-		height: 40%;
 		margin: 10px;
 		padding: 10px;
 		border-radius: 15px;
-		float: left;
+		min-height: calc(50% - 80px);
 	}
+
 	.record-text {
 		width: 80%;
 	}
@@ -24,6 +41,7 @@
 	.record-display {
 		padding-right: 5px;
 	}
+
 	.clear {
 		clear: both;
 	}
@@ -37,11 +55,12 @@
 	<div>
 		<h1 class="title"></h1> <button class="header-button" id="next-sprint">Migrate to Next Sprint</button> <button class="header-button" id="clear-data">Delete</button>
 	</div>
-	<div class="box" data-section="last" data-section-display="Last Sprint"></div>
-	<div class="box" data-section="good" data-section-display="Things We Did Well" data-add="true"></div>
-	<div class="box" data-section="bad" data-section-display="Things We Did Poorly" data-add="true"></div>
-	<div class="box" data-section="solutions" data-section-display="Solutions" data-add="true"></div>
-	
+	<div class="grid2x2">
+		<div class="box" data-section="last" data-section-display="Last Sprint"></div>
+		<div class="box" data-section="good" data-section-display="Things We Did Well" data-add="true"></div>
+		<div class="box" data-section="bad" data-section-display="Things We Did Poorly" data-add="true"></div>
+		<div class="box" data-section="solutions" data-section-display="Solutions" data-add="true"></div>
+	</div>
 	<br class="clear"/>
 	<button id="print">Print</button>
 	<div id="print-display"></div>
