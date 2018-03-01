@@ -1,6 +1,32 @@
 <html>
 <head>
 	<style type="text/css">
+	html,body {
+		background-color: #ffeeb0;
+		font-family: 'Coiny';
+	}
+
+	h1 {
+		font-family: 'Shrikhand';
+		color: #ecbd1c;
+		-webkit-text-stroke: 1px #913a2a;
+	}
+
+	h2 {
+		font-family: 'Shrikhand';
+		color: #ecbd1c;
+		-webkit-text-stroke: 1px #913a2a;
+	}
+
+	input {
+		background-color: #ffeeb0;
+		font-family: 'Coiny';
+	}
+
+	button {
+		font-family: 'Coiny';
+	}
+
 	.title {
 		display: inline;
 	}
@@ -13,7 +39,7 @@
 
 	.grid2x2 > div {
 		display: flex; 
-		flex-basis: calc(50% - 42px);
+		flex-basis: calc(50% - 60px);
 		flex-direction: column;
 	}
 
@@ -27,7 +53,7 @@
 		margin: 10px;
 		padding: 10px;
 		border-radius: 15px;
-		min-height: calc(50% - 80px);
+		min-height: calc(50% - 120px);
 	}
 
 	.record-text {
@@ -49,17 +75,39 @@
 	.strikeout {
 		text-decoration: line-through;
 	}
+
+	.border-blue {
+		border-width: 8px;
+		border-color: #a2d49f;
+	}
+
+	.border-green {
+		border-width: 8px;
+		border-color: #c7c12f;
+	}
+
+	.border-orange {
+		border-width: 8px;
+		border-color: #f16146;
+	}
+
+	.border-red {
+		border-width: 8px;
+		border-color: #ec2045;
+	}
+
 </style>
+<link href="https://fonts.googleapis.com/css?family=Coiny|Shrikhand" rel="stylesheet">
 </head>
 <body>
 	<div>
 		<h1 class="title"></h1> <button class="header-button" id="next-sprint">Migrate to Next Sprint</button> <button class="header-button" id="clear-data">Delete</button>
 	</div>
 	<div class="grid2x2">
-		<div class="box" data-section="last" data-section-display="Last Sprint"></div>
-		<div class="box" data-section="good" data-section-display="Things We Did Well" data-add="true"></div>
-		<div class="box" data-section="bad" data-section-display="Things We Did Poorly" data-add="true"></div>
-		<div class="box" data-section="solutions" data-section-display="Solutions" data-add="true"></div>
+		<div class="box border-blue" data-section="last" data-section-display="Last Sprint"></div>
+		<div class="box border-green" data-section="good" data-section-display="Things We Did Well" data-add="true"></div>
+		<div class="box border-orange" data-section="bad" data-section-display="Things We Did Poorly" data-add="true"></div>
+		<div class="box border-red" data-section="solutions" data-section-display="Solutions" data-add="true"></div>
 	</div>
 	<br class="clear"/>
 	<button id="print">Print</button>
