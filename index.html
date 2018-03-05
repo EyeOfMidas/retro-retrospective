@@ -1,9 +1,31 @@
 <html>
 <head>
+	<title>Retro Retrospective</title>
+	<meta name="title" content="Retro Retrospective" />
+	<meta name="description"  content="A free online local-storage page for Agile development teams to manage their retrospectives." />
+	<meta property="og:image" content="https://i.imgur.com/0S4HITp.png" />
+	<meta name="twitter:image:src" content="https://i.imgur.com/0S4HITp.png" />
+	<link rel="canonical" href="https://rawgit.com/EyeOfMidas/retro-retrospective/master/index.html" />
+	<link rel="author" href="https://github.com/EyeOfMidas" />
+	<meta property="author" content="Justin Gilman" />
+	<meta property="article:author" content="https://github.com/EyeOfMidas" />
+	
+	<meta name="robots" content="index, follow" />
 	<style type="text/css">
 	html,body {
+		margin: 0px;
+		padding: 0px;
+	}
+	.contents {
 		background-color: #ffeeb0;
 		font-family: 'Coiny';
+		margin: 0;
+		min-height: 100%;
+		min-width: 100%;
+
+		box-sizing: border-box;
+		padding: 5px;
+		padding-bottom: 20px;
 	}
 
 	h1 {
@@ -21,6 +43,12 @@
 	input {
 		background-color: #ffeeb0;
 		font-family: 'Coiny';
+	}
+
+	textarea {
+		background-color: #ffeeb0;
+		font-family: 'Coiny';
+		width: 100%;
 	}
 
 	button {
@@ -54,10 +82,6 @@
 		padding: 10px;
 		border-radius: 15px;
 		min-height: calc(50% - 120px);
-	}
-
-	.record-text {
-		width: 80%;
 	}
 
 	.header-button {
@@ -96,21 +120,46 @@
 		border-color: #ec2045;
 	}
 
+	.no-bullet-style {
+		list-style: none;
+	}
+
+	#print-display {
+		font-family: Arial;
+		color: black;
+		padding: 5px;
+		display: none;
+	}
+
+	#print-display h1 {
+		font-family: Arial;
+		color: black;
+		-webkit-text-stroke: 0;
+	}
+
+	#print-display h2 {
+		font-family: Arial;
+		color: black;
+		-webkit-text-stroke: 0;
+	}
 </style>
 <link href="https://fonts.googleapis.com/css?family=Coiny|Shrikhand" rel="stylesheet">
 </head>
 <body>
-	<div>
-		<h1 class="title"></h1> <button class="header-button" id="next-sprint">Migrate to Next Sprint</button> <button class="header-button" id="clear-data">Delete</button>
+	<div class="contents">
+		<div>
+			<h1 class="title"></h1> <button class="header-button" id="next-sprint">Migrate to Next Sprint</button> <button class="header-button" id="clear-data">Delete</button>
+		</div>
+		<div class="grid2x2">
+			<div class="box border-blue" data-section="last" data-section-display="Last Sprint"></div>
+			<div class="box border-green" data-section="good" data-section-display="Things We Did Well" data-add="true"></div>
+			<div class="box border-orange" data-section="bad" data-section-display="Things We Did Poorly" data-add="true"></div>
+			<div class="box border-red" data-section="solutions" data-section-display="Solutions" data-add="true"></div>
+		</div>
+		<br class="clear"/>
+		<button id="print">Print</button>
+		<button id="markdown">Markdown</button>
 	</div>
-	<div class="grid2x2">
-		<div class="box border-blue" data-section="last" data-section-display="Last Sprint"></div>
-		<div class="box border-green" data-section="good" data-section-display="Things We Did Well" data-add="true"></div>
-		<div class="box border-orange" data-section="bad" data-section-display="Things We Did Poorly" data-add="true"></div>
-		<div class="box border-red" data-section="solutions" data-section-display="Solutions" data-add="true"></div>
-	</div>
-	<br class="clear"/>
-	<button id="print">Print</button>
 	<div id="print-display"></div>
 </body>
 <script type="text/javascript">
@@ -119,6 +168,9 @@
 
 		var printButton = document.getElementById("print");
 		printButton.addEventListener("click", printButton_click);
+
+		var markdownButton = document.getElementById("markdown");
+		markdownButton.addEventListener("click", markdownButton_click);
 
 		var migrateButton = document.getElementById("next-sprint");
 		migrateButton.addEventListener("click", migrateSprintButton_click);
@@ -159,9 +211,16 @@
 	}
 
 	function printButton_click(event) {
+		var contentDiv = document.getElementsByClassName("contents")[0];
+		contentDiv.style.display = "none";
+		
 		var boxes = document.getElementsByClassName("box");
 		var printDisplay = document.getElementById("print-display");	
-
+		printDisplay.style.display = "block";
+		var title = localStorage.getItem("title");
+		var titleText = document.createElement("h1");
+		titleText.innerHTML = title;
+		printDisplay.appendChild(titleText);
 
 		for(var i = 0, box; box = boxes[i]; i++) {
 			box.style.display = "none";
@@ -184,11 +243,63 @@
 			printDisplay.appendChild(listContainer);
 		}
 		this.style.display = "none";
+
 		var clearButton = document.getElementById("clear-data");
 		clearButton.style.display = "none";
 
 		var migrateButton = document.getElementById("next-sprint");
 		migrateButton.style.display = "none";
+
+		var markdownButton = document.getElementById("markdown");
+		markdownButton.style.display = "none";
+	}
+
+	function markdownButton_click(event) {
+		var contentDiv = document.getElementsByClassName("contents")[0];
+		contentDiv.style.display = "none";
+
+		var boxes = document.getElementsByClassName("box");
+		var printDisplay = document.getElementById("print-display");	
+		printDisplay.style.display = "block";
+		var title = localStorage.getItem("title");
+		var titleText = document.createElement("h1");
+		titleText.innerHTML = "*" + title + "*";
+		printDisplay.appendChild(titleText);
+
+		for(var i = 0, box; box = boxes[i]; i++) {
+			box.style.display = "none";
+			var section = box.getAttribute("data-section");
+			var sectionDisplay = box.getAttribute("data-section-display");
+			printDisplay.innerHTML += "<h2>*" + sectionDisplay + "*</h2>";
+			var sectionStorage = localStorage.getItem(section);
+			var listContainer = document.createElement('ul');
+			if(sectionStorage != null) {
+				var sectionData = JSON.parse(sectionStorage);
+				for(var r = 0, record; record = sectionData[r]; r++) {
+					var listItem = document.createElement("li");
+					listItem.className = "no-bullet-style";
+					
+					if(record.strike) {
+						listItem.className += " strikeout";
+						record.text = "~" + record.text + "~";
+					}
+					listItem.innerHTML = "• " + record.text;
+					listContainer.appendChild(listItem);
+				}
+			}
+			printDisplay.appendChild(listContainer);
+			printDisplay.appendChild(document.createElement("br"));
+		}
+		this.style.display = "none";
+
+		var clearButton = document.getElementById("clear-data");
+		clearButton.style.display = "none";
+
+		var migrateButton = document.getElementById("next-sprint");
+		migrateButton.style.display = "none";
+
+		var printButton = document.getElementById("print");
+		printButton.style.display = "none";
 	}
 
 	function migrateSprintButton_click(event) {
@@ -300,9 +411,10 @@
 	function displayEditRecord(container, contents, id) {
 		var recordContainer = document.createElement("div");
 
-		var inputField = document.createElement("input");
-		inputField.type = "text";
-		inputField.value = contents;
+		var inputField = document.createElement("textarea");
+		//inputField.type = "text";
+		//inputField.value = contents;
+		inputField.innerHTML = contents;
 		inputField.className = "record-edit";
 		inputField.addEventListener("keydown", saveInput_enter);
 
@@ -395,8 +507,8 @@
 		var addRecordContainer = document.createElement("div");
 		addRecordContainer.className = "add-record";
 
-		var inputField = document.createElement("input");
-		inputField.type = "text";
+		var inputField = document.createElement("textarea");
+		//inputField.type = "text";
 		inputField.className = "record-text";
 		inputField.addEventListener("keydown", addInput_enter);
 
